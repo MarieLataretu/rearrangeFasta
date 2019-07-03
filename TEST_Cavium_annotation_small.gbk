@@ -1,0 +1,183 @@
+LOCUS       NZ_CP006571          1041170 bp    DNA     circular CON 15-AUG-2015
+DEFINITION  Chlamydia avium 10DC88, complete genome.
+ACCESSION   NZ_CP006571
+VERSION     NZ_CP006571.1  GI:753800349
+DBLINK      BioProject: PRJNA224116
+            BioSample: SAMN02216823
+            Assembly: GCF_000583875.1
+KEYWORDS    RefSeq.
+SOURCE      Chlamydia avium 10DC88
+  ORGANISM  Chlamydia avium 10DC88
+            Bacteria; Chlamydiae; Chlamydiales; Chlamydiaceae;
+            Chlamydia/Chlamydophila group; Chlamydia.
+REFERENCE   1  (bases 1 to 1041170)
+  AUTHORS   Sachse,K., Laroucau,K., Riege,K., Wehner,S., Dilcher,M.,
+            Creasy,H.H., Weidmann,M., Myers,G., Vorimore,F., Vicari,N.,
+            Magnino,S., Liebler-Tenorio,E., Ruettger,A., Bavoil,P.M.,
+            Hufert,F.T., Rossello-Mora,R. and Marz,M.
+  TITLE     Evidence for the existence of two new members of the family
+            Chlamydiaceae and proposal of Chlamydia avium sp. nov. and
+            Chlamydia gallinacea sp. nov
+  JOURNAL   Syst. Appl. Microbiol. 37 (2), 79-88 (2014)
+   PUBMED   24461712
+REFERENCE   2  (bases 1 to 1041170)
+  AUTHORS   Sachse,K.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (03-JUL-2013) Institute of Molecular Pathogenesis,
+            Friedrich-Loeffler-Institut (Federal Research Institute for Animal
+            Health), Naumburger Str, 96a, Jena 07743, Germany
+COMMENT     REFSEQ INFORMATION: The reference sequence was derived from
+            CP006571.
+            Annotation was added by the NCBI Prokaryotic Genome Annotation
+            Pipeline (released 2013). Information about the Pipeline can be
+            found here: http://www.ncbi.nlm.nih.gov/genome/annotation_prok/
+            
+            ##Genome-Annotation-Data-START##
+            Annotation Provider                    :: NCBI
+            Annotation Date                        :: 08/15/2015 19:28:39
+            Annotation Pipeline                    :: NCBI Prokaryotic Genome
+                                                      Annotation Pipeline
+            Annotation Method                      :: Best-placed reference
+                                                      protein set; GeneMarkS+
+            Annotation Software revision           :: 3.0
+            Features Annotated                     :: Gene; CDS; rRNA; tRNA;
+                                                      ncRNA; repeat_region
+            Genes                                  :: 944
+            CDS                                    :: 836
+            Pseudo Genes                           :: 65
+            rRNAs                                  :: 1, 1, 1  ( 5S, 16S, 23S )
+            complete rRNAs                         :: 1, 1, 1  ( 5S, 16S, 23S )
+            tRNAs                                  :: 39
+            ncRNA                                  :: 1
+            Frameshifted Genes                     :: 58
+            Frameshifted Genes On Monomer Runs     :: 4
+            Frameshifted Genes Not On Monomer Runs :: 3
+            ##Genome-Annotation-Data-END##
+            
+            ##Genome-Assembly-Data-START##
+            Assembly Method       :: GS De Novo Assembler v. 2.6; SeqMan NGen
+                                     v. 4.0.1; SeqMan Pro v. 9.1.0
+            Genome Coverage       :: 33
+            Sequencing Technology :: 454
+            ##Genome-Assembly-Data-END##
+            COMPLETENESS: full length.
+FEATURES             Location/Qualifiers
+     source          1..7006
+                     /organism="Chlamydia avium 10DC88"
+                     /mol_type="genomic DNA"
+                     /strain="10DC88"
+                     /isolate="10DC88"
+                     /isolation_source="spleen tissue from parrot (Polytelis)"
+                     /host="Polytelis"
+                     /culture_collection="DSM:27005"
+                     /db_xref="taxon:1229831"
+                     /chromosome="Chlamydia_sp_10DC88"
+                     /country="Germany: Arnsberg, North Rhine-Westphalia"
+                     /collection_date="12-Apr-2010"
+                     /collected_by="Dr. Jochen Kilwinski"
+     gene            complement(join(6666..7006,1..2168))
+                     /locus_tag="RT28_RS00005"
+                     /pseudo
+     CDS             complement(join(6666..7006,1..2168))
+                     /locus_tag="RT28_RS00005"
+                     /inference="EXISTENCE: similar to AA
+                     sequence:RefSeq:WP_020355873.1"
+                     /exception="annotated by transcript or proteomic data"
+                     /note="Derived by automated computational analysis using
+                     gene prediction method: Protein Homology."
+                     /pseudo
+                     /codon_start=1
+                     /transl_table=11
+                     /product="hypothetical protein"
+     repeat_region   16..197
+     gene            2682..4016
+                     /locus_tag="RT28_RS00010"
+                     /old_locus_tag="M832_00020"
+     CDS             2682..4016
+                     /locus_tag="RT28_RS00010"
+                     /old_locus_tag="M832_00020"
+                     /inference="EXISTENCE: similar to AA
+                     sequence:RefSeq:WP_020359202.1"
+                     /product="delta-aminolevulinic acid dehydratase"
+                     /note="Derived by automated computational analysis using
+                     gene prediction method: Protein Homology."
+                     /codon_start=1
+                     /transl_table=11
+                     /product="UDP-N-acetylglucosamine
+                     1-carboxyvinyltransferase"
+                     /protein_id="WP_038499930.1"
+                     /db_xref="GI:740714643"
+                     /translation="MLSVEVFGGCTLQGSVRVSGAKNSTTKLLVASLLSDRKCVLRNV
+                     PDIGDVRLTVELCQSLGSLVLWDKQEEVIEIQTPTIQLTQVPAQFSRVNRVPILLLGA
+                     LLARCPEGIQVPCIGGDAIGERSLNFHLEGLEKLGAQISYDEEEERYFAKAPQGLVGA
+                     YVTLPYPSVGATENLILAAVRAQGRTIIKNAALEVEILDLILFLQKAGVEITAGNDRT
+                     IEIFGCKDFHEVNHWIIPDKIEAASFGMAAVVTGGRVFVENAVQDTMIPFLKVLRSLG
+                     GGFSVLDNGIEFFYDGPLQGGVVLETDVHPGFVTDWQQPFSVLLSQAQGSSVIHETVH
+                     ENRLGYLQGLQDMGASCQLFYQCLSSKTCRYSTGNFPHSAVIHGATSLKAAHLVIPDL
+                     RAGFAYIMAALIARGGASIIDNVEILDRGYSNWMEKLRALGAQIQLVEPAML"
+     gene            complement(4011..5702)
+                     /locus_tag="RT28_RS00015"
+                     /old_locus_tag="M832_00030"
+     CDS             complement(4011..5702)
+                     /locus_tag="RT28_RS00015"
+                     /old_locus_tag="M832_00030"
+                     /inference="EXISTENCE: similar to AA
+                     sequence:RefSeq:WP_020355877.1"
+                     /note="Derived by automated computational analysis using
+                     gene prediction method: Protein Homology."
+                     /codon_start=1
+                     /transl_table=11
+                     /product="arginine--tRNA ligase"
+                     /protein_id="WP_038499933.1"
+                     /db_xref="GI:740714646"
+                     /translation="MPTLLSFLSSLCTTAIHSAFPQITEISPDITQSTKDLFGHYQCN
+                     DAMKLARTLKMPPKAIAEAIVQYIPQEAFSSIEIAGAGFINFTFSKRFLSDALETFSK
+                     NLCQGFRVAYPQKVVIDFSSPNIAKDMHVGHLRSTIIGDCLARVFAFVGHEVIRLNHI
+                     GDWGTAFGMLITYLQEESSQDIQNLEDLTELYKKAYTCFSQNEDFKKRSQNSVVALQS
+                     GDPQALALWKSICEISEKEFQKIYTILDITIEKRGESFYNPLLPEIIQDLENKNLITI
+                     SDNAKCVFHEGSPIPLIVQKSDGGYNYATTDLAAMRYRIQQDHADRIIIVTDLGQSLH
+                     FQLIEATSLAAGYLPHKGVFSHVGFGLVLDSTGKKFKTRSGDNIKLKELLDASIDQAK
+                     ATLKKHRPDMSDEEIIERAPILGINAIKYADLSSHRTNDYVFSFEKMLRFEGNTALFL
+                     LYAYVRIQGIKRRLGISQLSLEATANIQEPSEEALAVALLRFPEAIKDTLTSLCPHML
+                     TDYLYTLINKFNAFFRDCHIIGSPYQKERLYLCALVEKTLETGMHLLGLRTLDKL"
+     gene            complement(5712..6359)
+                     /locus_tag="RT28_RS00020"
+                     /old_locus_tag="M832_00040"
+     CDS             complement(5712..6359)
+                     /locus_tag="RT28_RS00020"
+                     /old_locus_tag="M832_00040"
+                     /inference="EXISTENCE: similar to AA
+                     sequence:RefSeq:WP_020355878.1"
+                     /note="Derived by automated computational analysis using
+                     gene prediction method: Protein Homology."
+                     /codon_start=1
+                     /transl_table=11
+                     /product="acyltransferase"
+                     /protein_id="WP_020355878.1"
+                     /db_xref="GI:520949403"
+                     /translation="MIFTICKFFTRVIFFLFYRLKTYGVKKNLIKGAAIVAANHNSYF
+                     DPIAIELSVRGCLYHLARSTLFSNPIVSWLQKQWGCYPIKRGEGNAGAFKAASHLFKK
+                     QKKLIIYPEGERSPTGELLPGKIGVGLMAIKTGVPVIPVYIGGTYDIFNRHQKFPKLW
+                     KTITCVFGTPLTFNDLINNDSINKKEAYQIATDRIMQKIAELKSWYENGCIDEVP"
+     gene            complement(6356..7006)
+                     /locus_tag="RT28_RS00025"
+                     /old_locus_tag="M832_00050"
+ORIGIN
+        1 atgagttcct tagggttgct tagacggccg cgtagaaata ggaaaactaa agctatcaga
+       61 gatctagtag cagaaacttg cttacttccc caagatttta tttgtccttt ttttattaaa
+      121 gaggggaaga atcttaagga ggaaatccct actcttccac aagtataccg atggagcctg
+      181 gatctcttac ttaaagagat cgaaagatta tgtttattag gtctacgtgc tgttattcta
+      241 tttcctgtaa ttccagatca tttaaaagat gcctatggtt cctactcttc gaatcctaaa
+      301 aacattttgt gtcgaggtat ttttgagatt aagaaagcct ttcctcatct atgtgtaatc
+      361 agtgatattg ctttggatcc ttatactact catggtcatg atggtatttt agatttagac
+      421 actggtgagg ttcttaatga tgaaagtgta agaatatttg gaaatatcgc aactttacat
+      481 gcagaaatgg gggtagatat tgttgctcct agtgatatga tggatgggag agtatcttat
+      541 attcgttcta tgttagatca gtcaggttgg cgccaagttt tgattctttc ttatagtgtt
+      601 aaatatgctt cttctttgta cagtcctttt cgggatgctt taggctctca tgtgcaacta
+      661 ggggataaat gtaattatca aatgaaccca acaaatgttt tagaagcttt gttagagtgt
+      721 tctttagatg aacaggaggg ggcagatata ttaatgatca aacccgcagg attttatctt
+      781 gatgttttac atcgtgtacg tcagaacacg acattacctt tagctgctta ccaggtgagt
+      841 ggggaatact ctatgatagc agcagcctcc acattagggg gaggggataa agaggctata
+      901 ttatatgaat ccttgatagc aattaaacgt tctggagctg atatggtgat ttcttatgga
+      961 acgcctagga tattagaaat gctatctcaa tagtagttat agttctttga agaactattt
+//
