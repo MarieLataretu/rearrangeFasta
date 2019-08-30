@@ -6,7 +6,7 @@ from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqFeature as sf
 
-def find_poi_in_genbank_file(anno_with_POI_file, product_of_interest, save_sequence=False, output_name=None):
+def find_poi_in_genbank_file(anno_with_POI_file, product_of_interest, output_name=None):
     non_plasmid_contig_list = []
     breakpoint = None
     reverse_complement = False
@@ -38,18 +38,19 @@ def find_poi_in_genbank_file(anno_with_POI_file, product_of_interest, save_seque
 
                         ##todo gleich reversekompl
 
-                        if (save_sequence):
+                        if (output_name):
                             ## save the nucleotide sequence (e.g. to blast it against an another genome)
                             if (type(seq_feature.location) is sf.FeatureLocation):
                                 ## file to save the nucleotide sequence of the product of interest
                                 if (not os.path.exists(config.POI_OUTPUT_DIR)):
                                     os.makedirs(config.POI_OUTPUT_DIR)
 
-                                if(output_name):
-                                    POI_nc_file = config.POI_OUTPUT_DIR + output_name + '.fasta'
-                                else:
-                                    POI_nc_file = config.POI_OUTPUT_DIR + product_of_interest.replace(
-                                        ' ', '_') + '_nc.fasta'
+                                # if(output_name):
+                                #     POI_nc_file = config.POI_OUTPUT_DIR + output_name + '.fasta'
+                                # else:
+                                #     POI_nc_file = config.POI_OUTPUT_DIR + product_of_interest.replace(
+                                #         ' ', '_') + '_nc.fasta'
+                                POI_nc_file = config.POI_OUTPUT_DIR + output_name + '.fasta'
 
                                 if(reverse_complement):
                                     new_description = '{}-{}-:{}-{}'.format(contig_description, 'revcomp',
