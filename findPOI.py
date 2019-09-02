@@ -14,6 +14,15 @@ class NoMatchFoundError(Exception):
     def __str__(self):
         return (f'ERROR: No match of "{self.target}" found in file {self.inp_file}')
 
+class NoMatchFoundInGenbankError(NoMatchFoundError):
+    def __init__(self, inp_file, target, feature, quali):
+        self.inp_file = inp_file
+        self.target = target
+        self.feature = feature
+        self.quali = quali
+    def __str__(self):
+        return (f'ERROR: No match of "{self.target}" found in file {self.inp_file} with "{self.feature}" as feature type and "{self.quali}" as qualifier.\n To change the feature type or qualifier, please change the config.')
+
 class MultipleMatchesFoundWarning(UserWarning):
     def __init__(self, inp_file, target):
         self.inp_file = inp_file
@@ -34,45 +43,46 @@ def find_poi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
     ### search for the product of interest in the annotation file
     with open(anno_with_POI_file, 'r') as gbk:
         for seq_record in SeqIO.parse(gbk, 'genbank'):
-            record_description = seq_record.description.replace(' ', '_')
             
             numb_of_ROIs= 0
             for seq_feature in seq_record.features:
-                if 'product' in seq_feature.qualifiers:
-                    if product_of_interest == seq_feature.qualifiers['product'][0]:
-                        numb_of_ROIs += 1
+                if seq_feature.type == config.seq_feature_type:
+                    if config.seq_feature_qualifier in seq_feature.qualifiers:
+                        if product_of_interest in seq_feature.qualifiers[config.seq_feature_qualifier]:
+                            numb_of_ROIs += 1
 
-                        if numb_of_ROIs == 1:
-                            breakpoint = seq_feature.location.start
+                            if numb_of_ROIs == 1:
+                                breakpoint = seq_feature.location.start
 
-                            ## check the strand
-                            if seq_feature.location.strand == -1:
-                                reverse_complement = True
+                                ## check the strand
+                                if seq_feature.location.strand == -1:
+                                    reverse_complement = True
 
-                            if output_file:
-                                ## save the nucleotide sequence (e.g. to blast it against an another genome)
-                                if type(seq_feature.location) is sf.FeatureLocation:
-                                    ## file to save the nucleotide sequence of the product of interest
-                                    if reverse_complement:
-                                        new_description = f"{record_description}-{'revcomp'}-:{seq_feature.location.start + 1}-{seq_feature.location.end}"
+                                if output_file:
+                                    record_description = seq_record.description.replace(' ', '_')
+                                    ## save the nucleotide sequence (e.g. to blast it against an another genome)
+                                    if type(seq_feature.location) is sf.FeatureLocation:
+                                        ## file to save the nucleotide sequence of the product of interest
+                                        if reverse_complement:
+                                            new_description = f"{record_description}-{'revcomp'}-:{seq_feature.location.start + 1}-{seq_feature.location.end}"
 
-                                        new_nc_record = SeqRecord(
-                                            seq_record.seq[seq_feature.location.start:seq_feature.location.end].reverse_complement(),
-                                            id=product_of_interest, description=new_description)
+                                            new_nc_record = SeqRecord(
+                                                seq_record.seq[seq_feature.location.start:seq_feature.location.end].reverse_complement(),
+                                                id=product_of_interest, description=new_description)
+                                        else:
+                                            new_description = f"{record_description}:{seq_feature.location.start + 1}-{seq_feature.location.end}"
+                                            new_nc_record = SeqRecord(seq_record.seq[seq_feature.location.start:seq_feature.location.end], id=product_of_interest, description=new_description)
+
+                                        # make dir structure and check if file exist
+                                        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+                                        if os.path.isfile(output_file):
+                                            print(f'WARNING: overriding {output_file}')
+                                        SeqIO.write(new_nc_record, output_file, 'fasta')
                                     else:
-                                        new_description = f"{record_description}:{seq_feature.location.start + 1}-{seq_feature.location.end}"
-                                        new_nc_record = SeqRecord(seq_record.seq[seq_feature.location.start:seq_feature.location.end], id=product_of_interest, description=new_description)
-
-                                    # make dir structure and check if file exist
-                                    os.makedirs(os.path.dirname(output_file), exist_ok=True)
-                                    if os.path.isfile(output_file):
-                                        print(f'WARNING: overriding {output_file}')
-                                    SeqIO.write(new_nc_record, output_file, 'fasta')
-                                else:
-                                    print('product of interest has a CompoundLocation; this is not implemented yet')
-                                    sys.exit(1)
+                                        print('product of interest has a CompoundLocation; this is not implemented yet')
+                                        sys.exit(1)
     if numb_of_ROIs == 0:
-        raise NoMatchFoundError(anno_with_POI_file, product_of_interest)
+        raise NoMatchFoundInGenbankError(anno_with_POI_file, product_of_interest, config.seq_feature_type, config.seq_feature_qualifier)
     elif numb_of_ROIs > 1:
         warnings.warn(MultipleMatchesFoundWarning(anno_with_POI_file, product_of_interest))
     assert breakpoint, f"Ooops, something went wrong. No breakpoint was found."
