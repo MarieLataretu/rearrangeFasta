@@ -31,12 +31,12 @@ class MultipleMatchesFoundWarning(UserWarning):
         return (f'Multiple matches of "{self.target}" found in file {self.inp_file}')
 
 
-def find_poi_in_gff_file(anno_with_POI_file, product_of_interest, output_file=None, fasta_file=None):
+def find_roi_in_gff_file(anno_with_POI_file, product_of_interest, output_file=None, fasta_file=None):
     breakpoint = None
     reverse_complement = False
     return((int(breakpoint), reverse_complement))
 
-def find_poi_in_genbank_file(anno_with_POI_file, product_of_interest, output_file=None):
+def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_file=None):
     breakpoint = None
     reverse_complement = False
 
@@ -88,7 +88,7 @@ def find_poi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
     assert breakpoint, f"Ooops, something went wrong. No breakpoint was found."
     return((int(breakpoint), reverse_complement))
 
-def find_poi_in_fasta_file(genome_fasta_file, seqeunce_of_interest_fasta_file, output_blast_name):
+def find_roi_in_fasta_file(genome_fasta_file, seqeunce_of_interest_fasta_file, output_blast_name):
     reverse_complement = False
     save_contig = False
 
