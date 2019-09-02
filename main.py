@@ -1,5 +1,9 @@
+import os
 import sys
 import argparse
+from findPOI import NoMatchFoundError
+from findPOI import MultipleMatchesFoundWarning
+from findPOI import find_poi_in_gff_file
 from findPOI import find_poi_in_genbank_file
 from findPOI import find_poi_in_fasta_file
 from rearranging import rearrange_fasta_file
@@ -36,10 +40,39 @@ Used tools: ncbi-blast-2.4.0+
 Author: Marie Lataretu
 E-Mail: marie.lataretu@uni-jena.de
 """
+GENBANK_EXTENSIONS= ['.gb', '.gbff', '.genebank', '.gbk']
+GFF_EXTENSIONS = ['.gff', '.gff3', '.gtf'] # works gtf?
+FASTA_EXTENSIONS = ['.fasta', '.fa', '.fn']
+
+class ExtensionNotFoundError(Exception):
+    def __init__(self, in_file, gb_ext=GENBANK_EXTENSIONS, gff_ext=GFF_EXTENSIONS, fa_ext=FASTA_EXTENSIONS):
+        self.in_file = in_file
+        self.gb_ext = gb_ext
+        self.gff_ext = gff_ext
+        self.fa_ext = fa_ext
+    def __str__(self):
+        return (f"The file extension of {self.in_file} is unknown.\nAllowed extensions: {', '.join(self.gb_ext)} for GenBank files, {', '.join(self.gff_ext)} for GFF files and {', '.join(self.fa_ext)} Fasta files.")
 
 def name_search(args):
-    print(args)
-    searchResult = find_poi_in_genbank_file(args.annotationFile, args.POIName.replace('\'', ''), args.savePOISequence)
+    extension = os.path.splitext(args.annotation_file)[1].lower()
+
+    searchResult = None
+    try:
+        if extension in GENBANK_EXTENSIONS:
+            try:
+                searchResult = find_poi_in_genbank_file(args.annotation_file, args.region_of_interest.replace('\'', ''), args.save_roi_sequence)
+            except NoMatchFoundError as err:
+                print(err)
+                sys.exit(1)
+        elif extension in GFF_EXTENSIONS:
+            searchResult = find_poi_in_gff_file(args.annotation_file, args.region_of_interest.replace('\'', ''), args.save_roi_sequence)
+        else:
+            raise ExtensionNotFoundError(args.annotation_file)
+    except ExtensionNotFoundError as err:
+        print(err)
+        sys.exit(1)
+
+    print(searchResult)
 
 def structural_search(args):
     searchResult = find_poi_in_fasta_file(args.genomeFile, args.sequenceOfInterest, args.blastOutName)
@@ -57,11 +90,13 @@ search_type_subparser = parser.add_subparsers(help='Search modi:')
 name_search_parser = search_type_subparser.add_parser('nameSearch', help='search by an annotated feature')
 name_search_parser.set_defaults(func=name_search)
 required_name_search_args = name_search_parser.add_argument_group('Required arguments')
-required_name_search_args.add_argument('-annotationFile', type=str, metavar='FILE', required=True, help='genbank or gff file')
-required_name_search_args.add_argument('-POIName', type=str, metavar='STR', required=True, help='name of the product of interest')
+required_name_search_args.add_argument('--annotation_file', type=str, metavar='FILE', required=True, help='genbank or gff file')
+required_name_search_args.add_argument('-roi', '--region_of_interest', type=str, metavar='STR', required=True, help='name of the product of interest')
+rearrange_target_name_search_args = name_search_parser.add_argument_group('Rearrange target file(s)', 'at least one file is required')
+rearrange_target_name_search_args.add_argument('files', type=str, metavar='FILE', nargs='+', help='list of files to rearrange (possible file types: fasta, genbank, gff)')
 output_name_search_options = name_search_parser.add_argument_group('Output options')
-output_name_search_options.add_argument('-outputName', type=str, metavar='STR', help='name of the output file')
-output_name_search_options.add_argument('-savePOISequence', type=str, metavar='FILE', help='name for the sequence outputfile of product of interest')
+output_name_search_options.add_argument('--output_name', type=str, metavar='STR', help='name of the output file')
+output_name_search_options.add_argument('--save_roi_sequence', type=str, metavar='FILE', help='name for the sequence outputfile of product of interest')
 
 structural_search_parser = search_type_subparser.add_parser('structuralSearch', help='search by blasting a sequence')
 structural_search_parser.set_defaults(func=structural_search)

@@ -1,4 +1,4 @@
-LOCUS       NZ_CP006571          1041170 bp    DNA     circular CON 15-AUG-2015
+LOCUS       NZ_CP006571             1020 bp    DNA     circular CON 15-AUG-2015
 DEFINITION  Chlamydia avium 10DC88, complete genome.
 ACCESSION   NZ_CP006571
 VERSION     NZ_CP006571.1  GI:753800349
@@ -127,7 +127,7 @@ FEATURES             Location/Qualifiers
                      gene prediction method: Protein Homology."
                      /codon_start=1
                      /transl_table=11
-                     /product="arginine--tRNA ligase"
+                     /product="acyltransferase"
                      /protein_id="WP_038499933.1"
                      /db_xref="GI:740714646"
                      /translation="MPTLLSFLSSLCTTAIHSAFPQITEISPDITQSTKDLFGHYQCN
