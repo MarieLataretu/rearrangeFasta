@@ -85,35 +85,34 @@ def structural_search(args):
 
     print(searchResult)
 
-desc = 'This script rearranges a Fasta, Genbank or GFF file with respect to a annotated region of interest or specified sequence in Fasta format.'
+desc = 'This script rearranges Fasta, Genbank or GFF files with respect to a annotated region of interest (nameSearch) or specified sequence in Fasta format (structuralSearch).'
 # usage = 'python main.py "strain_name_with_POI" "genome_with_POI_file" "anno_with_POI_file" "product_of_interest" ["strain_name_to_search_in"] ["genome_to_search_in"] ["anno_to_search_in"]'
 # usage = ' python main.py [-nameSearch|-structuralSearch]\nfor name search: python main.py -nameSearch -annotationFile file -POIName gene\nfor structural search: python main.py -structuralSearch'
-# epilog = 'Output paths can be specified in config.py.\n\nExamples:\na) given a genome and annotation file of a species called 'fuubarus' and a annotated product 'muh'\n> python main.py "fuubarus" "fuubarus.fasta" "fuubarus.gbf" "muh"\n\nb) given a genome file of a species called 'barbarus' and a product 'muh', that is not annotated. take the genome and annotation of 'fuubarus' to get the sequence of 'muh' and run blast to find it in 'barbarus'\n-> python main.py "fuubarus" "fuubarus.fasta" "fuubarus.gbf" "muh" "barbarus" "barbarus.fasta"\n\nc) given a genome file of a species called 'barbarus' and a product 'muh', that is not annotated namely in the annotation. take the genome and annotation of 'fuubarus' to get the sequence of 'muh' and run blast to find it in 'barbarus'.\n-> python main.py "fuubarus" "fuubarus.fasta" "fuubarus.gbf" "muh" "barbarus" "barbarus.fasta" "barbarus.gbf"'
-epilog = 'Author: Marie Lataretu\nE-Mail: marie.lataretu@uni-jena.de\nGitHub: https://github.com/MarieLataretu/rearrangeFasta'
+epilog = 'See main.py nameSearch -h and main.py structuralSearch for more.\n\nAuthor: Marie Lataretu\nE-Mail: marie.lataretu@uni-jena.de\nGitHub: https://github.com/MarieLataretu/rearrangeFasta'
 
 parser = argparse.ArgumentParser(description=desc, epilog=epilog, formatter_class=argparse.RawTextHelpFormatter)
 
-search_type_subparser = parser.add_subparsers(help='Search modi:')
+search_type_subparser = parser.add_subparsers(help='search modi:')
 
 name_search_parser = search_type_subparser.add_parser('nameSearch', help='search by an annotated feature')
 name_search_parser.set_defaults(func=name_search)
-required_name_search_args = name_search_parser.add_argument_group('Required arguments')
+required_name_search_args = name_search_parser.add_argument_group('required arguments')
 required_name_search_args.add_argument('--annotation_file', type=str, metavar='FILE', required=True, help='genbank or gff file')
 required_name_search_args.add_argument('-roi', '--region_of_interest', type=str, metavar='STR', required=True, help='name of the product of interest')
-rearrange_target_name_search_args = name_search_parser.add_argument_group('Rearrange target file(s)', 'at least one file is required')
+rearrange_target_name_search_args = name_search_parser.add_argument_group('rearrange target file(s)', 'at least one file is required')
 rearrange_target_name_search_args.add_argument('files', type=str, metavar='FILE', nargs='+', help='list of files to rearrange (possible file types: fasta, genbank, gff)')
-output_name_search_options = name_search_parser.add_argument_group('Output options')
+output_name_search_options = name_search_parser.add_argument_group('output options')
 output_name_search_options.add_argument('-o', '--output_name', type=str, metavar='FILE', help='name of the rearranged output file')
 output_name_search_options.add_argument('--save_roi_sequence', type=str, metavar='FILE', help='name for the sequence outputfile of product of interest')
 
 structural_search_parser = search_type_subparser.add_parser('structuralSearch', help='search by blasting a sequence')
 structural_search_parser.set_defaults(func=structural_search)
-required_structural_search_args = structural_search_parser.add_argument_group('Required arguments')
+required_structural_search_args = structural_search_parser.add_argument_group('required arguments')
 required_structural_search_args.add_argument('--fasta_file', type=str, metavar='FILE', required=True, help='fasta file where to search in')
 required_structural_search_args.add_argument('-roi', '--region_of_interest', type=str, metavar='FILE', required=True, help='nucleotide sequence in Fasta format for structural search')
-rearrange_target_structural_search_args = structural_search_parser.add_argument_group('Rearrange target file(s)', 'at least one file is required')
+rearrange_target_structural_search_args = structural_search_parser.add_argument_group('rearrange target file(s)', 'at least one file is required')
 rearrange_target_structural_search_args.add_argument('files', type=str, metavar='FILE', nargs='+', help='list of Fasta files to rearrange')
-output_structural_search_options = structural_search_parser.add_argument_group('Output options')
+output_structural_search_options = structural_search_parser.add_argument_group('output options')
 output_structural_search_options.add_argument('-o', '--output_name', type=str, metavar='FILE', help='name of the rearranged output file')
 output_structural_search_options.add_argument('--save_blast_output', type=str, metavar='FILE', help='name for the blast outputfile')
 
