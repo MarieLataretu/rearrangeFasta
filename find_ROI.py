@@ -37,6 +37,7 @@ def find_roi_in_gff_file(anno_with_POI_file, product_of_interest, output_file=No
     return((int(breakpoint), reverse_complement))
 
 def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_file=None):
+    target_id = None
     breakpoint = None
     reverse_complement = False
 
@@ -53,6 +54,7 @@ def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
 
                             if numb_of_ROIs == 1:
                                 breakpoint = seq_feature.location.start
+                                target_id = seq_record.id
 
                                 ## check the strand
                                 if seq_feature.location.strand == -1:
@@ -86,7 +88,7 @@ def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
     elif numb_of_ROIs > 1:
         warnings.warn(MultipleMatchesFoundWarning(anno_with_POI_file, product_of_interest))
     assert breakpoint, f"Ooops, something went wrong. No breakpoint was found."
-    return((int(breakpoint), reverse_complement))
+    return(str(target_id), (int(breakpoint), reverse_complement))
 
 def find_roi_in_fasta_file(fasta_file, roi_fasta, output_blast_name=None):
     reverse_complement = False
@@ -132,9 +134,10 @@ def find_roi_in_fasta_file(fasta_file, roi_fasta, output_blast_name=None):
 
         ## check the stand of the product of interest
         if int(table[0][8]) > int(table[0][9]):
-            return((int(table[0][8])-1, True))
+            return((str(table[0][0]), int(table[0][8])-1, True))
         else:
-            return((int(table[0][8])-1, False))
+            return((str(table[0][0]), int(table[0][8])-1, False))
+
     elif len(table) == 0:
         print ('no blast hit')
         sys.exit(0)

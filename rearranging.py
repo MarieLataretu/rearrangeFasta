@@ -19,9 +19,9 @@ def rearrange_fasta_file(genome_file, breakpoint, reverse_complement, output_nam
     Required parameter: breakpoint (int), reverse_complement (True/False), output_name, genome_file, product_of_interest
     Optional parameter: contig name (in case of preliminary structural search in multiple contigs)
     """
-    print ('start rearranging')
+    print('start rearranging')
 
-    if (not os.path.isdir(config.OUTPUT_DIR)):
+    if not os.path.isdir(config.OUTPUT_DIR):
         print('output directory created')
         os.mkdir(config.OUTPUT_DIR)
 
@@ -30,29 +30,29 @@ def rearrange_fasta_file(genome_file, breakpoint, reverse_complement, output_nam
     all_contigs_in_the_file = []
     with open(genome_file) as fas:
         for record in SeqIO.parse(fas, 'fasta'):
-            if ('plasmid' not in record.description):
-                if(contig_name):
-                    if(contig_name == record.id):
+            if 'plasmid' not in record.description:
+                if contig_name:
+                    if contig_name == record.id:
                         genome = record
                 else:
                     # no contig name given and assuming that there is only one contig
                     genome = record
                 all_contigs_in_the_file.append(record)
 
-    if(not genome):
-        if(contig_name):
+    if not genome:
+        if contig_name:
             sys.exit('end rearranging: no contig with the name ' + contig_name + ' found.')
-    if(len(all_contigs_in_the_file) > 1 and not contig_name):
+    if len(all_contigs_in_the_file) > 1 and not contig_name:
         sys.exit('end rearranging: genome consists of more than one non-plasmid contigs and it is not specified witch contig to rearrange')
     multiple_contigs = False
-    if(len(all_contigs_in_the_file) > 1 and contig_name):
+    if len(all_contigs_in_the_file) > 1 and contig_name:
         multiple_contigs = True
         print('rearranging: multiple contigs')
 
     ### genome stuff
-    if(reverse_complement):
+    if reverse_complement:
         ## reverse complement and adjust breakpoint
-        if(multiple_contigs):
+        if multiple_contigs:
             new_genome_sequence = genome.seq.reverse_complement()
             breakpoint = len(genome.seq) - breakpoint - 1  # annoying index things
             new_genome_sequence_1a = new_genome_sequence[breakpoint:]
@@ -62,7 +62,7 @@ def rearrange_fasta_file(genome_file, breakpoint, reverse_complement, output_nam
             breakpoint = len(genome.seq) - breakpoint - 1   # annoying index things
             new_genome_sequence = new_genome_sequence[breakpoint:] + new_genome_sequence[:breakpoint]
     else:
-        if(multiple_contigs):
+        if multiple_contigs:
             new_genome_sequence_1a = genome.seq[breakpoint:]
             new_genome_sequence_1b = genome.seq[:breakpoint]
         else:
@@ -70,10 +70,10 @@ def rearrange_fasta_file(genome_file, breakpoint, reverse_complement, output_nam
 
     ## save the rearranges genome
     # if(contig_name):
-    if(multiple_contigs):
+    if multiple_contigs:
         # new names
         genome.seq = new_genome_sequence_1a
-        if(len(genome.id.split('_')) > 2):
+        if len(genome.id.split('_')) > 2:
             ## spades specific name
             print('spades specific name stuff')
             old_name_1a = genome.id.split('_')
@@ -92,7 +92,7 @@ def rearrange_fasta_file(genome_file, breakpoint, reverse_complement, output_nam
             new_seq_record = SeqRecord(new_genome_sequence_1b, id=new_name_1b, name=new_name_1b,
                                        description=new_name_1b)
 
-        elif(len(genome.id.split('.')) == 2):
+        elif len(genome.id.split('.')) == 2:
             ## FLI specific name
             print('FLI specific name stuff')
             old_name_1a = genome.id.split('.')
@@ -146,29 +146,29 @@ def rearrange_fasta_file(genome_file, breakpoint, reverse_complement, output_nam
 
 def rearrange_genbank_file(anno_file, breakpoint, reverse_complement, output_name):
     print('start rearranging')
-    if(anno_file):
+    if anno_file:
         ### read in the annotation file
         with open(anno_file) as gbk:
             for seq_record in SeqIO.parse(gbk, 'genbank'):
-                if ('complete genome' in seq_record.description and ('plasmid' not in seq_record.description)):
+                if 'complete genome' in seq_record.description and ('plasmid' not in seq_record.description):
                     annotation = seq_record
 
-        if(not annotation):
+        if not annotation:
             sys.exit('No complete genome in the Genbank file found.')
 
         for seq_feature in annotation.features:
-            if (seq_feature.type == 'source'):
+            if seq_feature.type == 'source':
                 ## get the genome length
                 genome_length_anno = seq_feature.location.end
             else:
                 ## discriminate the two different feature location classes (FeatureLocation and CompoundLocation)
-                if(type(seq_feature.location) is sf.FeatureLocation):
-                    if (breakpoint <= seq_feature.location.start):
+                if type(seq_feature.location) is sf.FeatureLocation:
+                    if breakpoint <= seq_feature.location.start:
                         # feature start behind breakpoint
                         new_start = seq_feature.location.start - breakpoint
                         new_end = seq_feature.location.end - breakpoint
                         seq_feature.location = sf.FeatureLocation(new_start, new_end, seq_feature.strand)
-                    elif (breakpoint > seq_feature.location.end):
+                    elif breakpoint > seq_feature.location.end:
                         # feature end before breakpoint
                         new_start = genome_length_anno - breakpoint + seq_feature.location.start
                         new_end = genome_length_anno - breakpoint + seq_feature.location.end
@@ -179,11 +179,11 @@ def rearrange_genbank_file(anno_file, breakpoint, reverse_complement, output_nam
                         new_end = genome_length_anno - (genome_length_anno - seq_feature.location.start)
                         seq_feature.location = sf.FeatureLocation(0, new_end, seq_feature.strand) + sf.FeatureLocation(
                         new_start, genome_length_anno, seq_feature.strand)
-                elif(type(seq_feature.location) is sf.CompoundLocation):
+                elif type(seq_feature.location) is sf.CompoundLocation:
                     # get the strand of the feature to calculate the new start correctly
-                    if(seq_feature.location.strand is 1):
+                    if seq_feature.location.strand is 1:
                         new_start = list(seq_feature.location)[0] - breakpoint
-                    elif (seq_feature.location.strand is -1):
+                    elif seq_feature.location.strand is -1:
                         new_start = list(seq_feature.location)[-1] - breakpoint
                     else:
                         print('Mixed strands in one feature: ' + seq_feature)
@@ -192,7 +192,7 @@ def rearrange_genbank_file(anno_file, breakpoint, reverse_complement, output_nam
                 else:
                     sys.exit('end rearranging: something wired happened: a feature location is neither FeatureLocation nor CompoundLocation')
 
-        if (reverse_complement):
+        if reverse_complement:
             ## reverse complement and adjust breakpoint
             new_genome_sequence = annotation.seq.seq.reverse_complement()
             breakpoint = len(annotation.seq.seq) - breakpoint
@@ -215,18 +215,18 @@ def rearrange_gff_file(gff_file, sequence_length, breakpoint, output_name):
         reader = csv.reader(f, delimiter='\t')
         writer = csv.writer(f_out, delimiter='\t')
         for line in reader:
-            if (len(line) is 0 or line[0].startswith('#')):
+            if len(line) is 0 or line[0].startswith('#'):
                 writer.writerow(line)
             else:
                 start = int(line[3])
                 end = int(line[4])
-                if (start >= breakpoint):
+                if start >= breakpoint:
                     new_start = start - breakpoint + 1
                     new_end = end - breakpoint + 1
                     line[3] = new_start
                     line[4] = new_end
                     writer.writerow(line)
-                elif (start < breakpoint and end >= breakpoint):
+                elif start < breakpoint and end >= breakpoint:
                     new_start_1 = sequence_length + start + 1 - breakpoint
                     new_end_1 = sequence_length
                     new_start_2 = 1
@@ -254,13 +254,13 @@ def get_sequence_length_fasta(single_fasta_file):
 def get_sequence_length_genbank(genbank_file):
     with open(genbank_file) as gbk:
         for seq_record in SeqIO.parse(gbk, 'genbank'):
-            if (('complete genome' in seq_record.description) and ('plasmid' not in seq_record.description)):
+            if ('complete genome' in seq_record.description) and ('plasmid' not in seq_record.description):
                 annotation = seq_record
 
-    if (not annotation):
+    if not annotation:
         sys.exit('No complete genome in the Genbank file found.')
     for seq_feature in annotation.features:
-        if (seq_feature.type == 'source'):
+        if seq_feature.type == 'source':
             ## get the genome length
             return (seq_feature.location.end)
 

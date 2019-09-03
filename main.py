@@ -86,8 +86,6 @@ def structural_search(args):
     print(searchResult)
 
 desc = 'This script rearranges Fasta, Genbank or GFF files with respect to a annotated region of interest (nameSearch) or specified sequence in Fasta format (structuralSearch).'
-# usage = 'python main.py "strain_name_with_POI" "genome_with_POI_file" "anno_with_POI_file" "product_of_interest" ["strain_name_to_search_in"] ["genome_to_search_in"] ["anno_to_search_in"]'
-# usage = ' python main.py [-nameSearch|-structuralSearch]\nfor name search: python main.py -nameSearch -annotationFile file -POIName gene\nfor structural search: python main.py -structuralSearch'
 epilog = 'See main.py nameSearch -h and main.py structuralSearch for more.\n\nAuthor: Marie Lataretu\nE-Mail: marie.lataretu@uni-jena.de\nGitHub: https://github.com/MarieLataretu/rearrangeFasta'
 
 parser = argparse.ArgumentParser(description=desc, epilog=epilog, formatter_class=argparse.RawTextHelpFormatter)
