@@ -44,7 +44,7 @@ def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
     with open(anno_with_POI_file, 'r') as gbk:
         for seq_record in SeqIO.parse(gbk, 'genbank'):
             
-            numb_of_ROIs= 0
+            numb_of_ROIs = 0
             for seq_feature in seq_record.features:
                 if seq_feature.type == config.seq_feature_type:
                     if config.seq_feature_qualifier in seq_feature.qualifiers:
@@ -88,54 +88,54 @@ def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
     assert breakpoint, f"Ooops, something went wrong. No breakpoint was found."
     return((int(breakpoint), reverse_complement))
 
-def find_roi_in_fasta_file(genome_fasta_file, seqeunce_of_interest_fasta_file, output_blast_name):
+def find_roi_in_fasta_file(fasta_file, roi_fasta, output_blast_name=None):
     reverse_complement = False
-    save_contig = False
-
-    if (os.path.isdir(config.BLAST_OUTPUT_DIR)):
-        os.mkdir(config.BLAST_OUTPUT_DIR)
-        print('blast output directory created')
 
     ### read in the genome file
     num_of_records = 0
-    with open(genome_fasta_file) as fas:
+    with open(fasta_file) as fas:
         for record in SeqIO.parse(fas, 'fasta'):
-            if ('plasmid' not in record.description):
-                genome = record
-                num_of_records = num_of_records + 1
-    if (num_of_records > 1):
-        save_contig = True
+            num_of_records += 1
 
-    if (not os.path.exists(config.BLAST_OUTPUT_DIR)):
-        os.makedirs(config.BLAST_OUTPUT_DIR)
-    # out_blast_file = config.BLAST_OUTPUT_DIR + strain_name_with_POI + '_poi_vs_' + strain_name_to_search_in + '_genome.tab'
-    out_blast_file = config.BLAST_OUTPUT_DIR + output_blast_name +'.tab'
+    ### read in the roi file
+    num_of_records = 0
+    with open(roi_fasta) as fas:
+        for record in SeqIO.parse(fas, 'fasta'):
+            num_of_records += 1
+            roi_id = record.id
+    assert num_of_records == 1, f'The file {roi_fasta} is a multiple fasta file. Please use a single fasta file with only one sequence.'
 
-    if (not (os.path.isfile(genome_fasta_file + '.nhr') and os.path.isfile(genome_fasta_file + '.nsq') and os.path.isfile(genome_fasta_file + '.nin'))):
+    if not (os.path.isfile(fasta_file + '.nhr') and os.path.isfile(fasta_file + '.nsq') and os.path.isfile(fasta_file + '.nin')):
         print ('start makeblastdb')
-        makeblastdbStr = config.BLAST_BIN_PATH + 'makeblastdb -dbtype nucl -in ' + genome_fasta_file
+        makeblastdbStr = f'makeblastdb -dbtype nucl -in {fasta_file}'
         os.system(makeblastdbStr)
         print ('end makeblastdb')
 
+    if output_blast_name:
+        # make dir structure and check if file exist
+        os.makedirs(os.path.dirname(output_blast_name), exist_ok=True)
+        if os.path.isfile(output_blast_name):
+            print(f'WARNING: overriding {output_blast_name}')
+    else:
+        output_blast_name = os.path.join(os.path.dirname(os.path.abspath(fasta_file)), f'{os.path.splitext(fasta_file)[0]}_vs_{roi_id}_blast.tsv')
+
+
     print ('start blast')
-    blastStr = config.BLAST_BIN_PATH + 'blastn -out ' + out_blast_file + ' -outfmt \'6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore\' -query ' + seqeunce_of_interest_fasta_file + ' -db ' + genome_fasta_file + ' -evalue 1e-10'
+    blastStr = f'blastn -out {output_blast_name} -outfmt \'6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore\' -query {roi_fasta} -db {fasta_file} -evalue 1e-10'
     os.system(blastStr)
     print ('end blast')
 
     ## read in the blast result
-    with open(out_blast_file) as csvf:
+    with open(output_blast_name) as csvf:
         table = [row for row in csv.reader(csvf, delimiter='\t')]
-    if (len(table) is 1):
+    if len(table) == 1:
 
         ## check the stand of the product of interest
-        if (int(table[0][8]) > int(table[0][9])):
-            reverse_complement = True
-        # return the breakpoint, if is is reverse complemented and on which contig the breakpoint is, if necessery
-        if(save_contig):
-            return ((int(table[0][8])-1, reverse_complement, table[0][1]))
+        if int(table[0][8]) > int(table[0][9]):
+            return((int(table[0][8])-1, True))
         else:
-            return ((int(table[0][8])-1, reverse_complement))
-    elif(len(table) is 0):
+            return((int(table[0][8])-1, False))
+    elif len(table) == 0:
         print ('no blast hit')
         sys.exit(0)
     else:

@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 import argparse
 from find_ROI import NoMatchFoundError
 from find_ROI import MultipleMatchesFoundWarning
@@ -75,6 +76,10 @@ def name_search(args):
     print(searchResult)
 
 def structural_search(args):
+
+    # test if blast and makeblastdb are installed
+    assert shutil.which('blastn'), f'blastn has to be installed.'
+    assert shutil.which('makeblastdb'), f'makeblastdb has to be installed.'
 
     searchResult = find_roi_in_fasta_file(args.fasta_file, args.region_of_interest, args.save_blast_output)
 
