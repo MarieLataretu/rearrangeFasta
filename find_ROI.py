@@ -3,6 +3,7 @@ import os
 import csv
 import config
 import warnings
+import subprocess
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqFeature as sf
@@ -91,8 +92,6 @@ def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
     return(str(target_id), (int(breakpoint), reverse_complement))
 
 def find_roi_in_fasta_file(fasta_file, roi_fasta, output_blast_name=None):
-    reverse_complement = False
-
     ### read in the genome file
     num_of_records = 0
     with open(fasta_file) as fas:
@@ -106,11 +105,14 @@ def find_roi_in_fasta_file(fasta_file, roi_fasta, output_blast_name=None):
             num_of_records += 1
             roi_id = record.id
     assert num_of_records == 1, f'The file {roi_fasta} is a multiple fasta file. Please use a single fasta file with only one sequence.'
-
+    
+    makeblastdb_log_file = f'{fasta_file}.makeblastdb.log'
     if not (os.path.isfile(fasta_file + '.nhr') and os.path.isfile(fasta_file + '.nsq') and os.path.isfile(fasta_file + '.nin')):
         print ('start makeblastdb')
-        makeblastdbStr = f'makeblastdb -dbtype nucl -in {fasta_file}'
-        os.system(makeblastdbStr)
+        makeblastdb_cmd = f'makeblastdb -in {fasta_file} {config.makeblastdb_args}'
+        with open(makeblastdb_log_file, 'w') as log:
+            returncode_makeblastdb = subprocess.run(makeblastdb_cmd, shell=True, stdout=log, stderr=log).returncode
+        assert returncode_makeblastdb == 0, f'ERROR: makeblastdb failed with exit code {returncode_makeblastdb}.'
         print ('end makeblastdb')
 
     if output_blast_name:
@@ -120,11 +122,16 @@ def find_roi_in_fasta_file(fasta_file, roi_fasta, output_blast_name=None):
             print(f'WARNING: overriding {output_blast_name}')
     else:
         output_blast_name = os.path.join(os.path.dirname(os.path.abspath(fasta_file)), f'{os.path.splitext(fasta_file)[0]}_vs_{roi_id}_blast.tsv')
-
+    blastn_log_file = f'{output_blast_name}.blastn.log'
 
     print ('start blast')
-    blastStr = f'blastn -out {output_blast_name} -outfmt \'6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore\' -query {roi_fasta} -db {fasta_file} -evalue 1e-10'
-    os.system(blastStr)
+    blast_cmd = f'blastn -out {output_blast_name} -query {roi_fasta} -db {fasta_file} {config.blastn_args} -outfmt \'6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore\''
+    blastn = subprocess.run(blast_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if blastn.stdout or blastn.stderr:
+        with open(blastn_log_file, 'wb') as log:
+            log.write(blastn.stdout)
+            log.write(blastn.stderr)
+    assert blastn.returncode == 0, f'ERROR: blastn failed with exit code {blastn.returncode}.'
     print ('end blast')
 
     ## read in the blast result
