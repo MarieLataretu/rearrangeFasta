@@ -14,16 +14,12 @@ The function rearrange creates the rearranged genome and annoation file and save
 Author: Marie Lataretu
 E-Mail: marie.lataretu@uni-jena.de
 """
-def rearrange_fasta_file(genome_file, breakpoint, reverse_complement, output_name, contig_name=None):
+def rearrange_fasta_file(genome_file, breakpoint, reverse_complement, output_file, contig_name=None):
     """This function rearranges and saves a genome (fasta file) and, if given, a annotation file (Genbank file)
     Required parameter: breakpoint (int), reverse_complement (True/False), output_name, genome_file, product_of_interest
     Optional parameter: contig name (in case of preliminary structural search in multiple contigs)
     """
     print('start rearranging')
-
-    if not os.path.isdir(config.OUTPUT_DIR):
-        print('output directory created')
-        os.mkdir(config.OUTPUT_DIR)
 
     ### read in the genome
     genome = None
@@ -131,20 +127,20 @@ def rearrange_fasta_file(genome_file, breakpoint, reverse_complement, output_nam
 
         contig_index = None
         for i, record in enumerate(all_contigs_in_the_file):
-            if(record.id == genome.id):
+            if record.id == genome.id:
                 contig_index = i
 
         all_contigs_in_the_file.insert(0, all_contigs_in_the_file.pop(contig_index))
         all_contigs_in_the_file.append(new_seq_record)
-        SeqIO.write(all_contigs_in_the_file, config.OUTPUT_DIR + output_name + '_rearranged.fasta', 'fasta')
+        SeqIO.write(all_contigs_in_the_file, f'{output_file}_rearranged.fasta', 'fasta')
     else:
         genome.seq = new_genome_sequence
 
-        SeqIO.write(genome, config.OUTPUT_DIR + output_name + '_rearranged.fasta', 'fasta')\
+        SeqIO.write(genome, f'{output_file}_rearranged.fasta', 'fasta')\
 
     print ('end rearranging')
 
-def rearrange_genbank_file(anno_file, breakpoint, reverse_complement, output_name):
+def rearrange_genbank_file(anno_file, breakpoint, reverse_complement, output_file):
     print('start rearranging')
     if anno_file:
         ### read in the annotation file
@@ -205,13 +201,12 @@ def rearrange_genbank_file(anno_file, breakpoint, reverse_complement, output_nam
         # annotation.seq = Seq(str(annotation.seq), IUPAC.unambiguous_dna)
 
         ### write rearranged annotation
-        SeqIO.write(annotation, config.OUTPUT_DIR + output_name + '_annotation_rear.gbk', 'genbank')
+        SeqIO.write(annotation, f'{output_file}_annotation_rear.gbk', 'genbank')
 
         print('end rearranging')
 
-def rearrange_gff_file(gff_file, sequence_length, breakpoint, output_name):
-    new_gff_file = '{}/{}'.format(config.OUTPUT_DIR, output_name)
-    with open(gff_file, 'r') as f, open(new_gff_file, 'w') as f_out:
+def rearrange_gff_file(gff_file, sequence_length, breakpoint, output_file):
+    with open(gff_file, 'r') as f, open(output_file, 'w') as f_out:
         reader = csv.reader(f, delimiter='\t')
         writer = csv.writer(f_out, delimiter='\t')
         for line in reader:
@@ -249,10 +244,10 @@ def rearrange_gff_file(gff_file, sequence_length, breakpoint, output_name):
 def get_sequence_length_fasta(single_fasta_file):
     with open(single_fasta_file) as f:
         record = SeqIO.read(f, 'fasta')
-        return (len(record))
+        return(len(record))
 
 def get_sequence_length_genbank(genbank_file):
-    with open(genbank_file) as gbk:
+    with open(genbank_file, 'r') as gbk:
         for seq_record in SeqIO.parse(gbk, 'genbank'):
             if ('complete genome' in seq_record.description) and ('plasmid' not in seq_record.description):
                 annotation = seq_record
@@ -262,7 +257,7 @@ def get_sequence_length_genbank(genbank_file):
     for seq_feature in annotation.features:
         if seq_feature.type == 'source':
             ## get the genome length
-            return (seq_feature.location.end)
+            return(seq_feature.location.end)
 
 if(__name__ == '__main__'):
     # rearrange_fasta_file(17264, False, 'scaffold1_rearranged', '/mnt/dessertlocal/kons/Aspergillus_fumigatus_A1163/mitos/soapdenovo2_cap_sspace_reduced/0/sequence.fas-0', '')
