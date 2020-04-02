@@ -91,24 +91,24 @@ name_search_parser = search_type_subparser.add_parser('nameSearch', help='search
 name_search_parser.set_defaults(func=name_search)
 required_name_search_args = name_search_parser.add_argument_group('Required arguments')
 required_name_search_args.add_argument('--annotation_file', type=str, metavar='FILE', required=True, help='genbank or gff file')
-required_name_search_args.add_argument('-roi', '--region_of_interest', type=str, metavar='STR', required=True, help='name of the product of interest')
+required_name_search_args.add_argument('-roi', '--region_of_interest', type=str, metavar='STR', required=True, help='name of the annotated region of interest')
 rearrange_target_name_search_args = name_search_parser.add_argument_group('Rearrange target file(s)', 'at least one file is required')
 rearrange_target_name_search_args.add_argument('files', type=str, metavar='FILE', nargs='+', help='list of files to rearrange (possible file types: fasta, genbank, gff)')
 output_name_search_options = name_search_parser.add_argument_group('Output options')
 output_name_search_options.add_argument('--output_name', type=str, metavar='STR', help='name of the output file')
-output_name_search_options.add_argument('--save_roi_sequence', type=str, metavar='FILE', help='name for the sequence outputfile of product of interest')
+output_name_search_options.add_argument('--save_roi_sequence', type=str, metavar='FILE', help='name for the sequence outputfile of the annotated region of interest')
 
 structural_search_parser = search_type_subparser.add_parser('structuralSearch', help='search by blasting a sequence')
 structural_search_parser.set_defaults(func=structural_search)
 structural_search_parser.add_argument('-annotationFile', type=str, metavar='FILE', help='genbank or gff file')
-structural_search_parser.add_argument('-POIName', type=str, metavar='STR', help='name of the product of interest')
+structural_search_parser.add_argument('-POIName', type=str, metavar='STR', help='name of the annotated region of interest')
 structural_search_parser.add_argument('-sequenceOfInterest', type=str, metavar='FILE', help='nucleotide sequence for structural search')
 structural_search_parser.add_argument('-blastOutName', type=str, metavar='STR', help='name for the outputfile of the structural search')
 structural_search_parser.add_argument('-genomeFile', type=str, metavar='FILE', help='fasta file of the genome')
 structural_search_parser.add_argument('-gffFile', type=str, metavar='FILE', help='gff file of the genome')
 output_structural_search_options = structural_search_parser.add_argument_group('Output options')
 output_structural_search_options.add_argument('-outputName', type=str, metavar='STR', help='name of the output file')
-output_structural_search_options.add_argument('-savePOISequence', type=str, metavar='FILE', help='name for the sequence outputfile of product of interest')
+output_structural_search_options.add_argument('-savePOISequence', type=str, metavar='FILE', help='name for the sequence outputfile of the annotated region of interest')
 
 rearrange_target = parser.add_argument_group('Target file to rearrange')
 rearrange_target.add_argument('-rearrangeFasta', action='store_true', help='rearrange a fasta file')
@@ -134,13 +134,19 @@ rearrange_target.add_argument('-rearrangeGff', action='store_true', help='rearra
 # args = parser.parse_args(['-nameSearch', '-annotationFile', '/mnt/prostlocal/marie/chlamydia_comparison/chlamydia_psittaci/6BC_Cpsittaci_annotation.gbk',
 #                           '-POIName', '\'delta-aminolevulinic acid dehydratase\'',
 #                           '-rearrangeGff', '-gffFile', '/mnt/prostlocal/marie/chlamydia_comparison/chlamydia_psittaci/6BC_Cpsittaci_annotation.gff', '-outputName', 'testgff_name_psittaci'])
+if len(sys.argv) == 1:
+    parser.print_help(sys.stderr)
+    sys.exit(1)
+elif len(sys.argv) == 2:
+    if sys.argv[-1] == 'nameSearch':
+        name_search_parser.print_help(sys.stderr)
+        sys.exit(1)
+    elif sys.argv[-1] == 'structuralSearch':
+        name_search_parser.print_help(sys.stderr)
+        sys.exit(1)
 
 args = parser.parse_args()
 args.func(args)
-
-if len(sys.argv)==1:
-    parser.print_help(sys.stderr)
-    sys.exit(1)
 
 # if(args.rearrangeFasta):
 #     if(not(args.genomeFile or args.outputName)):
