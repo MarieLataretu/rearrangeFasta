@@ -61,7 +61,7 @@ def find_poi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
                                 if output_file:
                                     record_description = seq_record.description.replace(' ', '_')
                                     ## save the nucleotide sequence (e.g. to blast it against an another genome)
-                                    if type(seq_feature.location) is sf.FeatureLocation:
+                                    if type(seq_feature.location) == sf.FeatureLocation:
                                         ## file to save the nucleotide sequence of the product of interest
                                         if reverse_complement:
                                             new_description = f"{record_description}-{'revcomp'}-:{seq_feature.location.start + 1}-{seq_feature.location.end}"
@@ -125,7 +125,7 @@ def find_poi_in_fasta_file(genome_fasta_file, seqeunce_of_interest_fasta_file, o
     ## read in the blast result
     with open(out_blast_file) as csvf:
         table = [row for row in csv.reader(csvf, delimiter='\t')]
-    if (len(table) is 1):
+    if (len(table) == 1):
 
         ## check the stand of the product of interest
         if (int(table[0][8]) > int(table[0][9])):
@@ -135,7 +135,7 @@ def find_poi_in_fasta_file(genome_fasta_file, seqeunce_of_interest_fasta_file, o
             return ((int(table[0][8])-1, reverse_complement, table[0][1]))
         else:
             return ((int(table[0][8])-1, reverse_complement))
-    elif(len(table) is 0):
+    elif(len(table) == 0):
         print ('no blast hit')
         sys.exit(0)
     else:

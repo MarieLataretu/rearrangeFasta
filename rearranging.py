@@ -162,7 +162,7 @@ def rearrange_genbank_file(anno_file, breakpoint, reverse_complement, output_nam
                 genome_length_anno = seq_feature.location.end
             else:
                 ## discriminate the two different feature location classes (FeatureLocation and CompoundLocation)
-                if(type(seq_feature.location) is sf.FeatureLocation):
+                if(type(seq_feature.location) == sf.FeatureLocation):
                     if (breakpoint <= seq_feature.location.start):
                         # feature start behind breakpoint
                         new_start = seq_feature.location.start - breakpoint
@@ -179,11 +179,11 @@ def rearrange_genbank_file(anno_file, breakpoint, reverse_complement, output_nam
                         new_end = genome_length_anno - (genome_length_anno - seq_feature.location.start)
                         seq_feature.location = sf.FeatureLocation(0, new_end, seq_feature.strand) + sf.FeatureLocation(
                         new_start, genome_length_anno, seq_feature.strand)
-                elif(type(seq_feature.location) is sf.CompoundLocation):
+                elif(type(seq_feature.location) == sf.CompoundLocation):
                     # get the strand of the feature to calculate the new start correctly
-                    if(seq_feature.location.strand is 1):
+                    if(seq_feature.location.strand == 1):
                         new_start = list(seq_feature.location)[0] - breakpoint
-                    elif (seq_feature.location.strand is -1):
+                    elif (seq_feature.location.strand == -1):
                         new_start = list(seq_feature.location)[-1] - breakpoint
                     else:
                         print('Mixed strands in one feature: ' + seq_feature)
@@ -215,7 +215,7 @@ def rearrange_gff_file(gff_file, sequence_length, breakpoint, output_name):
         reader = csv.reader(f, delimiter='\t')
         writer = csv.writer(f_out, delimiter='\t')
         for line in reader:
-            if (len(line) is 0 or line[0].startswith('#')):
+            if (len(line) == 0 or line[0].startswith('#')):
                 writer.writerow(line)
             else:
                 start = int(line[3])
