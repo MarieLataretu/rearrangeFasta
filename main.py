@@ -61,7 +61,7 @@ def name_search(args):
     try:
         if extension in GENBANK_EXTENSIONS:
             try:
-                searchResult = find_roi_in_genbank_file(args.annotation_file, args.region_of_interest.replace('\'', ''), args.save_roi_sequence)
+                searchResult = find_roi_in_genbank_file(args.annotation_file, args.region_of_interest.lower(), args.save_roi_sequence)
             except NoMatchFoundError as err:
                 print(err)
                 sys.exit(1)
@@ -72,8 +72,8 @@ def name_search(args):
     except ExtensionNotFoundError as err:
         print(err)
         sys.exit(1)
-
-    print(searchResult)
+    # print(searchResult)
+    rearrange_fasta_file(args.file, searchResult[1][0], searchResult[1][1], args.output_name, searchResult[0])
 
 def structural_search(args):
 
@@ -98,7 +98,8 @@ required_name_search_args = name_search_parser.add_argument_group('required argu
 required_name_search_args.add_argument('--annotation_file', type=str, metavar='FILE', required=True, help='genbank or gff file')
 required_name_search_args.add_argument('-roi', '--region_of_interest', type=str, metavar='STR', required=True, help='name of the product of interest')
 rearrange_target_name_search_args = name_search_parser.add_argument_group('rearrange target file(s)', 'at least one file is required')
-rearrange_target_name_search_args.add_argument('files', type=str, metavar='FILE', nargs='+', help='list of files to rearrange (possible file types: fasta, genbank, gff)')
+# rearrange_target_name_search_args.add_argument('files', type=str, metavar='FILE', nargs='+', help='list of files to rearrange (possible file types: fasta, genbank, gff)')
+rearrange_target_name_search_args.add_argument('-f', '--file', type=str, metavar='FILE', help='fasta file to rearrange')
 output_name_search_options = name_search_parser.add_argument_group('output options')
 output_name_search_options.add_argument('-o', '--output_name', type=str, metavar='FILE', help='name of the rearranged output file')
 output_name_search_options.add_argument('--save_roi_sequence', type=str, metavar='FILE', help='name for the sequence outputfile of product of interest')

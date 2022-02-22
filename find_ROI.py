@@ -41,16 +41,16 @@ def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
     target_id = None
     breakpoint = None
     reverse_complement = False
+    numb_of_ROIs = 0
 
     ### search for the product of interest in the annotation file
     with open(anno_with_POI_file, 'r') as gbk:
         for seq_record in SeqIO.parse(gbk, 'genbank'):
             
-            numb_of_ROIs = 0
             for seq_feature in seq_record.features:
                 if seq_feature.type == config.seq_feature_type:
                     if config.seq_feature_qualifier in seq_feature.qualifiers:
-                        if product_of_interest in seq_feature.qualifiers[config.seq_feature_qualifier]:
+                        if product_of_interest in list(map(lambda x: x.lower(), seq_feature.qualifiers[config.seq_feature_qualifier])):
                             numb_of_ROIs += 1
 
                             if numb_of_ROIs == 1:
@@ -77,7 +77,6 @@ def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
                                             new_nc_record = SeqRecord(seq_record.seq[seq_feature.location.start:seq_feature.location.end], id=product_of_interest, description=new_description)
 
                                         # make dir structure and check if file exist
-                                        os.makedirs(os.path.dirname(output_file), exist_ok=True)
                                         if os.path.isfile(output_file):
                                             print(f'WARNING: overriding {output_file}')
                                         SeqIO.write(new_nc_record, output_file, 'fasta')
@@ -88,7 +87,7 @@ def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
         raise NoMatchFoundInGenbankError(anno_with_POI_file, product_of_interest, config.seq_feature_type, config.seq_feature_qualifier)
     elif numb_of_ROIs > 1:
         warnings.warn(MultipleMatchesFoundWarning(anno_with_POI_file, product_of_interest))
-    assert breakpoint, f"Ooops, something went wrong. No breakpoint was found."
+    assert breakpoint != None, f"Ooops, something went wrong. No breakpoint was found."
     return(str(target_id), (int(breakpoint), reverse_complement))
 
 def find_roi_in_fasta_file(fasta_file, roi_fasta, output_blast_name=None):
