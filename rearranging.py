@@ -49,12 +49,12 @@ def rearrange_fasta_file(genome_file, breakpoint, reverse_complement, output_fil
         ## reverse complement and adjust breakpoint
         if multiple_contigs:
             new_genome_sequence = genome.seq.reverse_complement()
-            breakpoint = len(genome.seq) - breakpoint - 1  # annoying index things
+            breakpoint = len(genome.seq) - breakpoint
             new_genome_sequence_1a = new_genome_sequence[breakpoint:]
             new_genome_sequence_1b = new_genome_sequence[:breakpoint]
         else:
             new_genome_sequence = genome.seq.reverse_complement()
-            breakpoint = len(genome.seq) - breakpoint - 1   # annoying index things
+            breakpoint = len(genome.seq) - breakpoint
             new_genome_sequence = new_genome_sequence[breakpoint:] + new_genome_sequence[:breakpoint]
     else:
         if multiple_contigs:
