@@ -60,6 +60,7 @@ def find_roi_in_genbank_file(anno_with_POI_file, product_of_interest, output_fil
                                 ## check the strand
                                 if seq_feature.location.strand == -1:
                                     reverse_complement = True
+                                    breakpoint = seq_feature.location.end
 
                                 if output_file:
                                     record_description = seq_record.description.replace(' ', '_')
